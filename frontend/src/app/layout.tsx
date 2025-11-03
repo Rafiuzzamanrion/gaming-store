@@ -22,9 +22,9 @@ export default function RootLayout({
     <body
       suppressHydrationWarning={true}
       className={clsx("min-h-screen text-foreground bg-background font-sans antialiased", font.variable,)}>
-   <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
-     {children}
-   </main>
+    <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
+      {children}
+    </main>
     </body>
     </html>
   );
