@@ -1,7 +1,7 @@
 import { createServer } from 'http';
-import app from './src/app';
-import { config } from './src/config/env.config';
-import { logger } from './src/config/logger.config';
+import app from './app';
+import { config } from '@config/env.config';
+import { logger } from '@config/logger.config';
 
 const server = createServer(app);
 
