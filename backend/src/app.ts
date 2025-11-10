@@ -11,23 +11,19 @@ import { validateRequest } from '@middleware/validation';
 import { config } from '@config/env.config';
 import { connectDatabase } from '@config/database.config';
 
-// Routes
 // import authRouter from '@modules/auth/routes/auth.routes';
 
 const app = express();
 
-// Core middleware
 app.use(helmet());
 app.use(corsMiddleware(config.frontendUrl));
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Request logger
 app.use(requestLogger);
 
-// Global API rate limiting (tunable)
-// app.use('/api', createRateLimiter({ windowMs: 15 * 60 * 1000, max: 300 }));
+
+app.use('/api', createRateLimiter({ windowMs: 15 * 60 * 1000, max: 300 }));
 
 // Health check
 app.get('/health', (_req, res) =>
@@ -42,11 +38,9 @@ app.post('/api/v1/ping', validateRequest((z) => z.object({ ping: z.string().min(
   res.json({ success: true, message: 'pong', data: req.body });
 });
 
-// 404 fallback
 app.use((_req, res) => res.status(404).json({ success: false, message: 'Route not found' }));
 
 app.use(errorHandler);
-
 connectDatabase();
 
 export default app;
