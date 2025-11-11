@@ -1,35 +1,19 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --secondary: #6a1b9a;
-    --primary: #00e676;
-    --dark: #121212;
-    --light: #f5f5f5;
-    --card-bg: rgba(18, 18, 18, 0.8);
-    --accent: #ff3d00;
-  }
+@theme {
+  --color-primary: #00e676;
+  --color-secondary: #6a1b9a;
+  --color-accent: #ff3d00;
+  --color-dark: #121212;
+  --color-light: #f5f5f5;
+  --color-card: rgb(45, 45, 45);
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-  }
-
-  *,
-  *::before,
-  *::after { box-sizing: border-box; }
-
-  * { margin: 0; padding: 0; }
-
-  body {
-    color-scheme: light dark;
-    @apply font-sans antialiased;
-    background: hsl(var(--background));
-    color: hsl(var(--foreground));
-  }
+  --color-background: oklch(100% 0 0);
+  --color-foreground: oklch(20% 0 0);
 }
 
-@layer components {}
-@layer utilities {}
+
+.dark {
+  --color-background: oklch(20% 0 0);
+  --color-foreground: oklch(98% 0 0);
+}

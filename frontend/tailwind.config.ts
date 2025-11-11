@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-import { heroui } from '@heroui/react'; // keep if you use HeroUI
+import { heroui } from '@heroui/react'; // Use @heroui/theme unless docs say @heroui/react exports the plugin
 
 const config: Config = {
   darkMode: 'class',
@@ -12,14 +12,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        primary: 'var(--primary)',
-        secondary: 'var(--secondary)',
-        accent: 'var(--accent)',
-        dark: 'var(--dark)',
-        light: 'var(--light)',
-        card: 'var(--card-bg)'
+
       },
       fontFamily: {
         sans: ['var(--font-rajdhani)', 'system-ui', 'ui-sans-serif', 'sans-serif']
@@ -29,8 +22,14 @@ const config: Config = {
         'slide-up': 'slideUp 0.4s ease-out'
       },
       keyframes: {
-        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } }
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' }
+        }
       }
     }
   },
