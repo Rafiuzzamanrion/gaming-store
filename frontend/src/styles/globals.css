@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   :root {
@@ -19,23 +17,19 @@
     --foreground: 210 40% 98%;
   }
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+  *,
+  *::before,
+  *::after { box-sizing: border-box; }
+
+  * { margin: 0; padding: 0; }
 
   body {
-    font-family: system-ui, -apple-system, sans-serif;
+    color-scheme: light dark;
+    @apply font-sans antialiased;
     background: hsl(var(--background));
     color: hsl(var(--foreground));
   }
 }
 
-@layer components {
-  /* Add your custom component styles here */
-}
-
-@layer utilities {
-  /* Add your custom utility styles here */
-}
+@layer components {}
+@layer utilities {}
