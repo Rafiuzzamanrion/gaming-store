@@ -6,7 +6,10 @@ import { Providers } from './providers';
 
 export const metadata = {
   title: 'Gaming Store',
-  description: 'Your ultimate gaming destination'
+  description: 'Your ultimate gaming destination',
+  icons: {
+    icon:'/images/logo-1.png'
+  }
 };
 
 const font = Rajdhani({
