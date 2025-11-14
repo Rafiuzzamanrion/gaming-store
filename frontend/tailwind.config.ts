@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-import { heroui } from '@heroui/react'; // Use @heroui/theme unless docs say @heroui/react exports the plugin
+import { heroui } from '@heroui/theme';
 
 const config: Config = {
   darkMode: 'class',
