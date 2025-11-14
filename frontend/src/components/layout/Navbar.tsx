@@ -22,7 +22,7 @@ import {FaWhatsapp} from "react-icons/fa";
 
 export const Navbar = () => {
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky" className={'shadow-md top-0 z-50 bg-background'}>
+    <HeroUINavbar maxWidth="xl" position="sticky" className={'shadow-md top-0 z-50 bg-background mb-5'}>
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
