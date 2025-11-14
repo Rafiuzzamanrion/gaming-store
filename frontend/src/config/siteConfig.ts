@@ -9,36 +9,25 @@ export const siteConfig = {
       href: "/",
     },
     {
-      label: "SHOP",
-      href: "/shop",
+      label: "GAMES",
+      href: "/games",
     },
     {
-      label: "ABOUT US",
-      href: "/about",
+      label: "NEWS",
+      href: "/news",
     },
     {
-      label: "CONTACT US",
-      href: "/contact",
-    },
-  ],
-  navMenuItems: [
-    {
-      label: "HOME",
-      href: "/",
+      label: "REVIEWS",
+      href: "/reviews",
     },
     {
-      label: "SHOP",
-      href: "/shop",
+      label: "COMMUNITY",
+      href: "/community",
     },
     {
-      label: "ABOUT US",
-      href: "/about",
+      label: "SUPPORT",
+      href: "/support",
     },
-    {
-      label: "CONTACT US",
-      href: "/contact",
-    },
-
   ],
   links: {
     github: "https://github.com/heroui-inc/heroui",
