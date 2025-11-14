@@ -16,17 +16,19 @@ import clsx from "clsx";
 
 import { siteConfig } from "@/config/siteConfig";
 import Image from "next/image";
-import {FaWhatsapp} from "react-icons/fa";
+import {usePathname} from "next/navigation";
 
 
 
 export const Navbar = () => {
+  const pathName = usePathname();
+  const active = siteConfig.navItems.find(item => item.href === pathName);
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky" className={'shadow-md top-0 z-50 bg-background mb-5'}>
+    <HeroUINavbar maxWidth="xl" position="sticky" className={'shadow-md top-0 z-50 bg-card mb-5'}>
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
-            <Image src={'/logo2.png'} alt="BM SHOP" width={40} height={40} className="rounded-full"/>
+            <Image src={'/images/logo-1-bg.png'} alt="logo" width={50} height={50} className=""/>
           </NextLink>
         </NavbarBrand>
         <ul className="hidden lg:flex gap-4 justify-start ml-2">
@@ -51,15 +53,16 @@ export const Navbar = () => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        <NavbarItem className="hidden sm:flex gap-3">
-          <Link isExternal aria-label="Facebook" href={siteConfig.links.facebook}>
-            <Image
-              width={35} height={35}
-              src={'/facebook.png'} alt={'fb'}/>
-          </Link>
-          <Link aria-label={'Telegram'} href={siteConfig.links.telegram}>
-            <Image src={'/telegram.png'} alt={'tg'} width={35} height={35}/>
-          </Link>
+        <NavbarItem className="hidden md:flex">
+          <Button
+            isExternal
+            as={Link}
+            href={siteConfig.links.whatsapp}
+            variant="bordered"
+            color={'success'}
+          >
+            Login
+          </Button>
         </NavbarItem>
         <NavbarItem className="hidden md:flex">
           <Button
@@ -69,7 +72,7 @@ export const Navbar = () => {
             variant="shadow"
             color={'success'}
           >
-            <FaWhatsapp />  WhatsApp Now
+            Sign Up
           </Button>
         </NavbarItem>
       </NavbarContent>
@@ -80,13 +83,13 @@ export const Navbar = () => {
 
       <NavbarMenu className={'bg-gradient-to-b from-green-300 to-green-100'}>
         <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
+          {siteConfig.navItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link
                 color={
                   index === 2
                     ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
+                    : index === siteConfig.navItems.length - 1
                       ? "danger"
                       : "foreground"
                 }
