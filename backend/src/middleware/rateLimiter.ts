@@ -1,5 +1,4 @@
 import rateLimit from 'express-rate-limit';
-
 // @ts-ignore
 export const createRateLimiter = (options?: Partial<rateLimit.Options>) =>
   rateLimit({
