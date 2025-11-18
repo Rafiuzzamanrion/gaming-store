@@ -25,7 +25,6 @@ app.use(requestLogger);
 
 app.use('/api', createRateLimiter({ windowMs: 15 * 60 * 1000, max: 300 }));
 
-// Health check
 app.get('/health', (_req, res) =>
   res.json({ status: 'ok', env: config.nodeEnv, timestamp: new Date().toISOString() })
 );
