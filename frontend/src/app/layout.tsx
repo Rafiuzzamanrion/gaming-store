@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning className={font.variable}>
     <body suppressHydrationWarning className={clsx('font-sans', font.className)}>
     <Navbar/>
-    <main className="container mx-auto max-w-7xl px-4 sm:px-6">
+    <main className="container mx-auto max-w-7xl px-4 sm:px-5">
       <Providers themeProps={{ attribute: 'class', defaultTheme: 'dark' }}>
         {children}
       </Providers>
