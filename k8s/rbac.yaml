@@ -1,0 +1,45 @@
+# ServiceAccount for Gaming Store applications
+# Provides identity for pods and enables RBAC
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gaming-store-sa
+  namespace: gaming-store
+  labels:
+    app.kubernetes.io/name: gaming-store
+---
+# Role for gaming-store namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: gaming-store-role
+  namespace: gaming-store
+  labels:
+    app.kubernetes.io/name: gaming-store
+rules:
+  # Allow reading ConfigMaps
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch"]
+  # Allow reading Secrets (for app config)
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+---
+# Bind role to service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: gaming-store-rolebinding
+  namespace: gaming-store
+  labels:
+    app.kubernetes.io/name: gaming-store
+subjects:
+  - kind: ServiceAccount
+    name: gaming-store-sa
+    namespace: gaming-store
+roleRef:
+  kind: Role
+  name: gaming-store-role
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,126 @@
+# NetworkPolicy for Gaming Store
+# Controls pod-to-pod communication for security
+---
+# Frontend NetworkPolicy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: frontend-network-policy
+  namespace: gaming-store
+  labels:
+    app.kubernetes.io/name: gaming-store
+    app.kubernetes.io/component: frontend
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: frontend
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow traffic from Ingress controller
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 3000
+  egress:
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+    # Allow traffic to backend service
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: backend
+      ports:
+        - protocol: TCP
+          port: 5000
+
+---
+# Backend NetworkPolicy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-network-policy
+  namespace: gaming-store
+  labels:
+    app.kubernetes.io/name: gaming-store
+    app.kubernetes.io/component: backend
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: backend
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow traffic from Ingress controller
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 5000
+    # Allow traffic from frontend pods
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: frontend
+      ports:
+        - protocol: TCP
+          port: 5000
+  egress:
+    # Allow DNS resolution
+    - to:
+        - namespaceSelector: {}
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+    # Allow traffic to MongoDB (in-cluster or external)
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: mongodb
+      ports:
+        - protocol: TCP
+          port: 27017
+    # Allow traffic to Redis (in-cluster or external)
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/component: redis
+      ports:
+        - protocol: TCP
+          port: 6379
+    # Allow external MongoDB/Redis (managed services)
+    # IMPORTANT: For production, replace 0.0.0.0/0 with specific IP ranges
+    # of your managed database services (e.g., MongoDB Atlas, AWS ElastiCache)
+    # Example for MongoDB Atlas: 
+    #   cidr: 192.0.2.0/24 (replace with actual Atlas IP range)
+    # Example for AWS: Use VPC endpoints instead for better security
+    - to:
+        - ipBlock:
+            # Replace with your managed service IP ranges in production
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+      ports:
+        - protocol: TCP
+          port: 27017
+        - protocol: TCP
+          port: 6379

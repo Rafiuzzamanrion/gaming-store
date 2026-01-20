@@ -38,3 +38,14 @@ Thumbs.db
 
 # Misc
 *.pem
+
+# Docker
+.docker/
+docker-compose.override.yml
+docker-compose.local.yml
+
+# SSL certificates (should not be committed)
+nginx/ssl/
+*.crt
+*.key
+

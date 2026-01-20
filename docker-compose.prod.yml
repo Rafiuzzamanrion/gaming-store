@@ -1,0 +1,133 @@
+# docker-compose.prod.yml - Production Environment
+# Usage: docker-compose -f docker-compose.prod.yml up --build -d
+#
+# This configuration is designed to be Kubernetes-ready:
+# - All services use health checks compatible with Kubernetes probes
+# - Environment variables can be easily mapped to ConfigMaps/Secrets
+# - NGINX reverse proxy pattern matches Kubernetes Ingress
+# - Services are stateless and can be scaled horizontally
+
+services:
+  # NGINX Reverse Proxy (acts like Kubernetes Ingress)
+  nginx:
+    image: nginx:alpine
+    container_name: gaming-store-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      # Uncomment for SSL certificates
+      # - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    networks:
+      - gaming-store-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend (Next.js)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: runner
+    container_name: gaming-store-frontend
+    expose:
+      - "3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost/api/v1}
+      - NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL:-http://localhost}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:?NEXTAUTH_SECRET is required}
+    networks:
+      - gaming-store-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+      # For horizontal scaling (uncomment for multi-replica)
+      # replicas: 2
+
+  # Backend (Express.js)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runner
+    container_name: gaming-store-backend
+    expose:
+      - "5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost}
+      - MONGODB_URI=${MONGODB_URI:?MONGODB_URI is required}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET:?JWT_ACCESS_SECRET is required}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET is required}
+      - JWT_ACCESS_EXPIRES_IN=${JWT_ACCESS_EXPIRES_IN:-15m}
+      - JWT_REFRESH_EXPIRES_IN=${JWT_REFRESH_EXPIRES_IN:-30d}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-}
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - gaming-store-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+      # For horizontal scaling (uncomment for multi-replica)
+      # replicas: 2
+
+  # Redis Cache (for production, consider using managed Redis)
+  redis:
+    image: redis:7-alpine
+    container_name: gaming-store-redis-prod
+    expose:
+      - "6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - gaming-store-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+networks:
+  gaming-store-network:
+    driver: bridge
+
+volumes:
+  redis-data:

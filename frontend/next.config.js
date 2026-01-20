@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable standalone output for Docker deployment
+  // This creates a minimal production build that includes only necessary files
+  output: 'standalone',
+
   images: {
     remotePatterns: [
       // Local dev images (adjust port if different)

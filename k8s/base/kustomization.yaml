@@ -1,0 +1,21 @@
+# Kustomize base configuration
+# This serves as the foundation for all environments
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: gaming-store
+
+resources:
+  - ../namespace.yaml
+  - ../rbac.yaml
+  - ../configmap.yaml
+  - ../secrets.yaml
+  - ../frontend/deployment.yaml
+  - ../frontend/service.yaml
+  - ../backend/deployment.yaml
+  - ../backend/service.yaml
+  - ../ingress.yaml
+
+commonLabels:
+  app.kubernetes.io/name: gaming-store
+  app.kubernetes.io/managed-by: kustomize

@@ -1,0 +1,80 @@
+# Kustomize production overlay
+# Use: kubectl apply -k k8s/overlays/production
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: gaming-store
+
+resources:
+  - ../../base
+  - ../../frontend/hpa.yaml
+  - ../../frontend/pdb.yaml
+  - ../../backend/hpa.yaml
+  - ../../backend/pdb.yaml
+  - ../../network-policy.yaml
+
+commonLabels:
+  environment: production
+
+# Production-specific patches
+patches:
+  # Increase replicas for production
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 3
+    target:
+      kind: Deployment
+      name: frontend
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 3
+    target:
+      kind: Deployment
+      name: backend
+  # Increase resource limits for production
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 1Gi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 1000m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 512Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 250m
+    target:
+      kind: Deployment
+      name: frontend
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 1Gi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 1000m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 512Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 250m
+    target:
+      kind: Deployment
+      name: backend
+
+# Production ConfigMap values - replace with actual domain
+configMapGenerator:
+  - name: gaming-store-config
+    behavior: merge
+    literals:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_APP_URL=https://your-domain.com
+      - NEXT_PUBLIC_API_URL=https://your-domain.com/api/v1
+      - NEXT_PUBLIC_SOCKET_URL=https://your-domain.com
+      - NEXTAUTH_URL=https://your-domain.com
+      - FRONTEND_URL=https://your-domain.com
