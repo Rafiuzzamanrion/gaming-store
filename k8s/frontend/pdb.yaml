@@ -1,0 +1,16 @@
+# PodDisruptionBudget for Frontend
+# Ensures minimum availability during voluntary disruptions
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: frontend-pdb
+  namespace: gaming-store
+  labels:
+    app.kubernetes.io/name: gaming-store
+    app.kubernetes.io/component: frontend
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gaming-store
+      app.kubernetes.io/component: frontend

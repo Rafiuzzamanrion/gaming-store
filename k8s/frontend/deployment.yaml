@@ -24,6 +24,7 @@ spec:
         app.kubernetes.io/name: gaming-store
         app.kubernetes.io/component: frontend
     spec:
+      serviceAccountName: gaming-store-sa
       containers:
         - name: frontend
           # Replace with your container registry image

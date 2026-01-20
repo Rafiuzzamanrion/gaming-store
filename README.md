@@ -138,23 +138,49 @@ The production setup includes an NGINX reverse proxy that:
 
 ## Kubernetes Deployment
 
-The application is Kubernetes-ready. See the `k8s/` directory for manifests.
+The application is fully Kubernetes-ready with comprehensive manifests. See the `k8s/` directory for details.
 
-### Quick Deploy to Kubernetes
+### Features
+
+- **HorizontalPodAutoscaler (HPA)** - Auto-scaling based on CPU/memory (2-10 pods)
+- **PodDisruptionBudget (PDB)** - High availability during maintenance
+- **NetworkPolicy** - Secure pod-to-pod communication
+- **RBAC** - ServiceAccount with proper permissions
+- **Kustomize** - Environment-based configuration (dev/prod)
+
+### Quick Deploy with Kustomize (Recommended)
 
 ```bash
-# Create namespace
-kubectl apply -f k8s/namespace.yaml
+# Development environment (includes Redis & MongoDB)
+kubectl apply -k k8s/overlays/development
 
-# Apply configuration
+# Production environment (with HPA, PDB, NetworkPolicy)
+kubectl apply -k k8s/overlays/production
+```
+
+### Manual Deployment
+
+```bash
+# 1. Create namespace and RBAC
+kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/rbac.yaml
+
+# 2. Apply configuration
 kubectl apply -f k8s/configmap.yaml
 kubectl apply -f k8s/secrets.yaml  # Edit with your secrets first!
 
-# Deploy services
+# 3. Deploy databases (dev/staging only)
+kubectl apply -f k8s/redis/
+kubectl apply -f k8s/mongodb/
+
+# 4. Deploy applications
 kubectl apply -f k8s/frontend/
 kubectl apply -f k8s/backend/
 
-# Configure ingress
+# 5. Apply network policies (production)
+kubectl apply -f k8s/network-policy.yaml
+
+# 6. Configure ingress
 kubectl apply -f k8s/ingress.yaml  # Edit with your domain first!
 ```
 
@@ -196,12 +222,18 @@ gaming-store/
 │   └── conf.d/
 │       └── default.conf    # Server configuration
 ├── k8s/                      # Kubernetes manifests
-│   ├── namespace.yaml
-│   ├── configmap.yaml
-│   ├── secrets.yaml
-│   ├── frontend/
-│   ├── backend/
-│   └── ingress.yaml
+│   ├── namespace.yaml       # Namespace definition
+│   ├── configmap.yaml       # ConfigMap
+│   ├── secrets.yaml         # Secrets (template)
+│   ├── rbac.yaml           # ServiceAccount & RBAC
+│   ├── network-policy.yaml  # NetworkPolicy rules
+│   ├── ingress.yaml         # NGINX Ingress
+│   ├── frontend/            # Frontend Deployment, Service, HPA, PDB
+│   ├── backend/             # Backend Deployment, Service, HPA, PDB
+│   ├── redis/               # Redis Deployment (dev/staging)
+│   ├── mongodb/             # MongoDB StatefulSet (dev/staging)
+│   ├── base/                # Kustomize base
+│   └── overlays/            # Kustomize overlays (dev/prod)
 ├── docker-compose.yml        # Development environment
 ├── docker-compose.prod.yml   # Production environment
 └── .env.docker.example       # Environment template
