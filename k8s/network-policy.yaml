@@ -106,8 +106,14 @@ spec:
         - protocol: TCP
           port: 6379
     # Allow external MongoDB/Redis (managed services)
+    # IMPORTANT: For production, replace 0.0.0.0/0 with specific IP ranges
+    # of your managed database services (e.g., MongoDB Atlas, AWS ElastiCache)
+    # Example for MongoDB Atlas: 
+    #   cidr: 192.0.2.0/24 (replace with actual Atlas IP range)
+    # Example for AWS: Use VPC endpoints instead for better security
     - to:
         - ipBlock:
+            # Replace with your managed service IP ranges in production
             cidr: 0.0.0.0/0
             except:
               - 10.0.0.0/8
