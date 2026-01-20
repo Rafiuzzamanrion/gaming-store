@@ -1,0 +1,8 @@
+# Kubernetes Namespace for Gaming Store
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gaming-store
+  labels:
+    app.kubernetes.io/name: gaming-store
+    app.kubernetes.io/managed-by: kubectl
